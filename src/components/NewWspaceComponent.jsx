@@ -5,16 +5,16 @@ function NewWspaceComponent() {
   const { currentWs, switchWs } = useContext(WorkspaceContext);
 
   const handleDragOver = (e) => {
-    e.target.parentNode.style.border = "3px dashed white";
+    e.target.style.border = "3px dashed white";
   };
 
   const handleDragLeave = (e) => {
-    e.target.parentNode.style.border = "none";
+    e.target.style.border = "none";
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
-    e.target.parentNode.style.border = "none";
+    e.target.style.border = "none";
 
     const files = Array.from(e.dataTransfer.files);
 
@@ -94,7 +94,7 @@ function NewWspaceComponent() {
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        Drop your file here to upload it ...
+        Drop your file here to upload it...
       </div>
     </div>
   );

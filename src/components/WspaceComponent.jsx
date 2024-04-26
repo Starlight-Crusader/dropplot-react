@@ -97,12 +97,6 @@ const WspaceComponent = () => {
           </div>
         </div>
 
-        <div>
-          <p style={{ fontSize: "0.8vw", marginBottom: "2vw" }}>
-            * Drag and drop other files onto existing plots for multiple plots
-          </p>
-        </div>
-
         <div className="d-flex flex-column align-items-center">
           {plots.map((_, index) => (
             <WspaceItemComponent key={"plot" + index} index={index} />
