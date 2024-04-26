@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { WorkspaceContext } from "../App";
 
 const WspaceListComponent = () => {
+  const { currentWs, switchWs } = useContext(WorkspaceContext);
+
   const [workspaceList, setWorkspaceList] = useState(
     Object.keys(localStorage).filter((key) => key.startsWith("ws."))
   );
 
-  window.addEventListener("storage", (e) => {
+  useEffect(() => {
     const keys = Object.keys(localStorage);
     const filteredKeys = keys.filter((key) => key.startsWith("ws."));
     setWorkspaceList(filteredKeys);
-  });
+  }, [currentWs]);
 
   const handleItemClick = (key) => {
-    localStorage.setItem("currentWs", key);
-    window.dispatchEvent(new Event("storage"));
+    switchWs(key);
   };
 
   const handleItemMouseOver = (e) => {

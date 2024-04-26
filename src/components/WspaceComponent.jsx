@@ -1,8 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import Plot from "react-plotly.js";
 import { Row, Col } from "react-bootstrap";
+import { WorkspaceContext } from "../App";
 
 const MyPlotComponent = () => {
+  const { currentWs, switchWs } = useContext(WorkspaceContext);
+
   const deleteBtnRef = useRef(null);
 
   const [plotData, setPlotData] = useState({});
@@ -14,14 +17,12 @@ const MyPlotComponent = () => {
     document.documentElement.clientWidth
   );
 
-  window.addEventListener("storage", (e) => {
+  useEffect(() => {
     setPlotName("New Plot");
     setXlabel("X");
     setYlabel("Y");
 
-    const storedData = JSON.parse(
-      localStorage.getItem(localStorage.getItem("currentWs"))
-    );
+    const storedData = JSON.parse(localStorage.getItem(currentWs));
 
     if (storedData === null) {
       return;
@@ -36,7 +37,7 @@ const MyPlotComponent = () => {
     };
 
     setPlotData([trace]);
-  });
+  }, [currentWs]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -52,10 +53,9 @@ const MyPlotComponent = () => {
 
   const handleDeleteClick = (e) => {
     deleteBtnRef.current.style.border = "none";
-    localStorage.removeItem(localStorage.getItem("currentWs"));
-    localStorage.setItem("currentWs", "");
+    localStorage.removeItem(currentWs);
+    switchWs("");
     setPlotData({});
-    window.dispatchEvent(new Event("storage"));
   };
 
   const handleDeleteMouseOver = (e) => {
@@ -66,7 +66,7 @@ const MyPlotComponent = () => {
     e.currentTarget.style.border = "none";
   };
 
-  if (localStorage.getItem("currentWs") != "") {
+  if (currentWs != "") {
     return (
       <>
         <div
