@@ -5,12 +5,12 @@ const WspaceListComponent = () => {
   const { currentWs, switchWs } = useContext(WorkspaceContext);
 
   const [workspaceList, setWorkspaceList] = useState(
-    Object.keys(localStorage).filter((key) => key.startsWith("ws."))
+    Object.keys(localStorage).filter((key) => key.startsWith("ws-"))
   );
 
   useEffect(() => {
     const keys = Object.keys(localStorage);
-    const filteredKeys = keys.filter((key) => key.startsWith("ws."));
+    const filteredKeys = keys.filter((key) => key.startsWith("ws-"));
     setWorkspaceList(filteredKeys);
   }, [currentWs]);
 

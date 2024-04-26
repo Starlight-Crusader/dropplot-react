@@ -5,24 +5,18 @@ function NewWspaceComponent() {
   const { currentWs, switchWs } = useContext(WorkspaceContext);
 
   const handleDragOver = (e) => {
-    e.target.parentNode.style.border = "3px dashed white";
+    e.target.style.border = "3px dashed white";
   };
 
   const handleDragLeave = (e) => {
-    e.target.parentNode.style.border = "none";
+    e.target.style.border = "none";
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
-    e.target.parentNode.style.border = "none";
+    e.target.style.border = "none";
 
     const files = Array.from(e.dataTransfer.files);
-
-    if (files.length !== 1) {
-      alert("Please upload only CSV files!");
-      return;
-    }
-
     const csvFiles = files.filter((file) => file.type === "text/csv");
 
     if (csvFiles.length !== 1) {
@@ -31,7 +25,7 @@ function NewWspaceComponent() {
     }
 
     const file = csvFiles[0];
-    const fileName = file.name;
+    const fileName = file.name.slice(0, -4);
 
     const reader = new FileReader();
     reader.readAsText(file);
@@ -48,9 +42,30 @@ function NewWspaceComponent() {
     const x = data[0].map(Number);
     const y = data[1].map(Number);
 
-    const key = "ws." + fileName;
+    const key = "ws-" + fileName;
 
-    localStorage.setItem(key, JSON.stringify({ x, y }));
+    if (localStorage.getItem(key) !== null) {
+      alert(
+        "A workspace with this name already exists, rename/delete it to upload this file!"
+      );
+
+      return;
+    }
+
+    const workspaceObject = {
+      plots: [
+        {
+          graphs: [
+            {
+              x,
+              y,
+            },
+          ],
+        },
+      ],
+    };
+
+    localStorage.setItem(key, JSON.stringify(workspaceObject));
     switchWs(key);
   };
 
@@ -73,7 +88,7 @@ function NewWspaceComponent() {
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        Drop your file here to upload it ...
+        Drop your file here to upload it...
       </div>
     </div>
   );
