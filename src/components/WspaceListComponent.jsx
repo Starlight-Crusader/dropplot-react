@@ -27,18 +27,17 @@ const WspaceListComponent = () => {
 
   return (
     <div
-      className="container d-flex flex-column justify-content-center align-items-center"
-      style={{ marginBottom: "2vw" }}
+      className="d-flex flex-column justify-content-center align-items-start"
+      style={{ marginBottom: "0.5vw" }}
     >
       {workspaceList.map((key, index) => (
         <div
-          className="d-flex align-items-center"
+          className="d-flex align-items-start"
           key={index}
           onClick={() => handleItemClick(key)}
           onMouseOver={handleItemMouseOver}
           onMouseLeave={handleItemMouseOut}
           style={{
-            width: "85%",
             height: "2vw",
           }}
         >

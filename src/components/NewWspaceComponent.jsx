@@ -1,6 +1,6 @@
 function NewWspaceComponent() {
   const handleDragOver = (e) => {
-    e.target.parentNode.style.border = "2px solid white";
+    e.target.parentNode.style.border = "3px dashed white";
   };
 
   const handleDragLeave = (e) => {
@@ -14,7 +14,7 @@ function NewWspaceComponent() {
     const files = Array.from(e.dataTransfer.files);
 
     if (files.length !== 1) {
-      alert("Please drop only one CSV file at a time!");
+      alert("Please upload only CSV files!");
       return;
     }
 
@@ -52,18 +52,25 @@ function NewWspaceComponent() {
 
   return (
     <div
-      className="row d-flex justify-content-center align-items-center"
-      style={{ width: "90%", height: "3vw", borderRadius: "1vw" }}
-      onDrop={(e) => e.preventDefault()}
+      className="d-flex flex-column justify-content-center align-items-center"
+      style={{
+        width: "90%",
+        height: "4vw",
+        textAlign: "center",
+        fontSize: "1vw",
+        marginTop: "1vw",
+        maxWidth: "80%",
+      }}
+      nDrop={(e) => e.preventDefault()}
       onDragOver={(e) => e.preventDefault()}
     >
-      <img
-        src="https://images.vexels.com/media/users/3/223322/isolated/preview/5a5a1248ae05274bd4c8bd32f574f4fd-plus-icon-symbol.png"
-        style={{ width: "2vw", height: "2vw", padding: "0" }}
+      <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-      />
+      >
+        Drop your file here to upload it ...
+      </div>
     </div>
   );
 }

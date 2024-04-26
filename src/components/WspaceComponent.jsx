@@ -4,10 +4,15 @@ import { Row, Col } from "react-bootstrap";
 
 const MyPlotComponent = () => {
   const deleteBtnRef = useRef(null);
+
   const [plotData, setPlotData] = useState({});
   const [plotName, setPlotName] = useState("New Plot");
   const [xlabel, setXlabel] = useState("X");
   const [ylabel, setYlabel] = useState("Y");
+
+  const [rootWidth, setRootWidth] = useState(
+    document.documentElement.clientWidth
+  );
 
   window.addEventListener("storage", (e) => {
     setPlotName("New Plot");
@@ -32,6 +37,18 @@ const MyPlotComponent = () => {
 
     setPlotData([trace]);
   });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setRootWidth(document.documentElement.clientWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const handleDeleteClick = (e) => {
     deleteBtnRef.current.style.border = "none";
@@ -70,12 +87,12 @@ const MyPlotComponent = () => {
             style={{ width: "70%", height: "70%" }}
           />
         </div>
-        <div style={{ border: "3px solid black" }}>
+        <div style={{ border: "2px solid black" }}>
           <Plot
             data={plotData}
             layout={{
-              width: "700",
-              height: "400",
+              width: rootWidth * 0.4,
+              height: rootWidth * 0.25,
               title: plotName ? { text: plotName } : {},
               xaxis: { title: xlabel },
               yaxis: { title: ylabel },
@@ -85,10 +102,10 @@ const MyPlotComponent = () => {
           />
         </div>
 
-        <div style={{ margin: "2vw" }}>
-          <Row style={{ margin: "1vw 0" }}>
-            <Col md={6}>
-              <p style={{ fontSize: "1.1vw" }}>Plot name:</p>
+        <div style={{ marginTop: "3vw" }}>
+          <Row style={{ marginBottom: "10px" }}>
+            <Col md={6} className="d-flex flex-column justify-content-center">
+              <p style={{ fontSize: "18px", margin: 0 }}>Plot name:</p>
             </Col>
             <Col md={6}>
               <input
@@ -101,9 +118,9 @@ const MyPlotComponent = () => {
             </Col>
           </Row>
 
-          <Row style={{ margin: "1vw 0" }}>
-            <Col md={6}>
-              <p style={{ fontSize: "1.1vw" }}>X Label:</p>
+          <Row style={{ marginBottom: "10px" }}>
+            <Col md={6} className="d-flex flex-column justify-content-center">
+              <p style={{ fontSize: "18px", margin: 0 }}>X Label:</p>
             </Col>
             <Col md={6}>
               <input
@@ -116,9 +133,9 @@ const MyPlotComponent = () => {
             </Col>
           </Row>
 
-          <Row style={{ margin: "1vw 0" }}>
-            <Col md={6}>
-              <p style={{ fontSize: "1.1vw" }}>Y Label:</p>
+          <Row style={{ marginBottom: "10px" }}>
+            <Col md={6} className="d-flex flex-column justify-content-center">
+              <p style={{ fontSize: "18px", margin: 0 }}>Y Label:</p>
             </Col>
             <Col md={6}>
               <input
@@ -140,8 +157,8 @@ const MyPlotComponent = () => {
         className="d-flex flex-row justify-content-center align-items-center"
       >
         <p style={{ fontSize: "1.1vw", maxWidth: "70%" }}>
-          Upload some data (drop a file on the puls icon) to plot or pick an
-          existing workspace...
+          Upload some data (drop a file on the left) to plot or pick an existing
+          workspace...
         </p>
       </div>
     );
