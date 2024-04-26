@@ -1,12 +1,17 @@
-import React, { useRef, useContext } from "react";
+import React, { useRef, useContext, useState, useEffect } from "react";
 import { WorkspaceContext } from "../App";
 import WspaceItemComponent from "./WspaceItemComponent";
 
 const WspaceComponent = () => {
   const { currentWs, switchWs } = useContext(WorkspaceContext);
+  const [rerenderWs, setRerenderWs] = useState(true);
 
   const deleteBtnRef = useRef(null);
   const nameInputRef = useRef(null);
+
+  useEffect(() => {
+    setRerenderWs(false);
+  }, [rerenderWs]);
 
   const handleDeleteClick = (e) => {
     deleteBtnRef.current.style.border = "none";
@@ -41,12 +46,69 @@ const WspaceComponent = () => {
     e.currentTarget.style.border = "none";
   };
 
+  const handleDragOver = (e) => {
+    e.target.style.border = "2px dashed black";
+  };
+
+  const handleDragLeave = (e) => {
+    e.target.style.border = "none";
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.target.style.border = "none";
+
+    const files = Array.from(e.dataTransfer.files);
+    const csvFiles = files.filter((file) => file.type === "text/csv");
+
+    if (csvFiles.length !== 1) {
+      alert("Please drop only one CSV file at a time!");
+      return;
+    }
+
+    const file = csvFiles[0];
+
+    const reader = new FileReader();
+    reader.readAsText(file);
+
+    reader.addEventListener("load", () => {
+      const content = reader.result.toString();
+      parseCSV(content);
+    });
+  };
+
+  const parseCSV = (csvContent) => {
+    const rows = csvContent.trim().split("\n");
+    const data = rows.map((row) => row.split(","));
+    const x = data[0].map(Number);
+    const y = data[1].map(Number);
+
+    const workspaceObject = JSON.parse(localStorage.getItem(currentWs));
+
+    workspaceObject.plots.push({
+      graphs: [
+        {
+          x,
+          y,
+        },
+      ],
+    });
+    localStorage.setItem(currentWs, JSON.stringify(workspaceObject));
+
+    setRerenderWs(true);
+  };
+
   if (currentWs != "") {
     const storedData = JSON.parse(localStorage.getItem(currentWs));
     const plots = storedData ? storedData.plots : [];
 
     return (
-      <>
+      <div
+        onDrop={(e) => e.preventDefault()}
+        onDragOver={(e) => e.preventDefault()}
+        className="d-flex flex-column align-items-center"
+        style={{ backgroundColor: "white", height: "100%" }}
+      >
         <div
           className="d-flex flex-row align-items-center"
           style={{ margin: "1.5vw 0" }}
@@ -102,7 +164,21 @@ const WspaceComponent = () => {
             <WspaceItemComponent key={"plot" + index} index={index} />
           ))}
         </div>
-      </>
+
+        <div
+          style={{
+            margin: "2vw",
+            maxWidth: "70%",
+            textAlign: "center",
+            padding: "1vw",
+          }}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          Drop another file here to add a graph...
+        </div>
+      </div>
     );
   } else {
     return (

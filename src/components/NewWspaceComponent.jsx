@@ -17,12 +17,6 @@ function NewWspaceComponent() {
     e.target.style.border = "none";
 
     const files = Array.from(e.dataTransfer.files);
-
-    if (files.length !== 1) {
-      alert("Please upload only CSV files!");
-      return;
-    }
-
     const csvFiles = files.filter((file) => file.type === "text/csv");
 
     if (csvFiles.length !== 1) {

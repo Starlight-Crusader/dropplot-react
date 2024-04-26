@@ -68,17 +68,10 @@ const WspaceItemComponent = ({ index }) => {
   };
 
   const handleDrop = (e) => {
-    e.pre;
     e.preventDefault();
     e.target.style.border = "none";
 
     const files = Array.from(e.dataTransfer.files);
-
-    if (files.length !== 1) {
-      alert("Please upload only CSV files!");
-      return;
-    }
-
     const csvFiles = files.filter((file) => file.type === "text/csv");
 
     if (csvFiles.length !== 1) {
@@ -115,10 +108,6 @@ const WspaceItemComponent = ({ index }) => {
     <>
       <div
         className="d-flex flex-row align-items-center"
-        style={{
-          borderRight: "2px solid black",
-          borderLeft: "2px solid black",
-        }}
         onDrop={(e) => e.preventDefault()}
         onDragOver={(e) => e.preventDefault()}
       >
@@ -198,6 +187,7 @@ const WspaceItemComponent = ({ index }) => {
                 maxWidth: "70%",
                 textAlign: "center",
                 padding: "1vw",
+                fontSize: "1vw",
               }}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}

@@ -31,21 +31,17 @@ function App() {
 
   return (
     <WorkspaceContext.Provider value={{ currentWs, switchWs }}>
-      <div
-        className="container"
-        style={{ maxWidth: "70vw", height: "100vh", backgroundColor: "white" }}
-      >
+      <div className="container" style={{ maxWidth: "70vw", height: "100vh" }}>
         <div className="row" style={{ height: "100%" }}>
           <div className="col-md-3 bg-dark text-white">
             <div
               style={{
                 position: "relative",
                 marginTop: `${marginTop}px`,
-                zIndex: "999",
               }}
             >
               <div style={{ textAlign: "center", margin: "1vw 0" }}>
-                <p style={{ fontSize: "3vw" }}>FastPlot</p>
+                <p style={{ fontSize: "3vw" }}>DropPlot</p>
               </div>
 
               <div
