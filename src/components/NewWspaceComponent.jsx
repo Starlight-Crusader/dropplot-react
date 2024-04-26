@@ -31,7 +31,7 @@ function NewWspaceComponent() {
     }
 
     const file = csvFiles[0];
-    const fileName = file.name;
+    const fileName = file.name.slice(0, -4);
 
     const reader = new FileReader();
     reader.readAsText(file);
@@ -48,7 +48,7 @@ function NewWspaceComponent() {
     const x = data[0].map(Number);
     const y = data[1].map(Number);
 
-    const key = "ws." + fileName;
+    const key = "ws-" + fileName;
 
     if (localStorage.getItem(key) !== null) {
       alert(
@@ -58,7 +58,20 @@ function NewWspaceComponent() {
       return;
     }
 
-    localStorage.setItem(key, JSON.stringify({ x, y }));
+    const workspaceObject = {
+      plots: [
+        {
+          graphs: [
+            {
+              x,
+              y,
+            },
+          ],
+        },
+      ],
+    };
+
+    localStorage.setItem(key, JSON.stringify(workspaceObject));
     switchWs(key);
   };
 

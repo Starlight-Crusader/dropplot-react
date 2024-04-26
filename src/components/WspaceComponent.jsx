@@ -1,152 +1,112 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
-import Plot from "react-plotly.js";
-import { Row, Col } from "react-bootstrap";
+import React, { useRef, useContext } from "react";
 import { WorkspaceContext } from "../App";
+import WspaceItemComponent from "./WspaceItemComponent";
 
-const MyPlotComponent = () => {
+const WspaceComponent = () => {
   const { currentWs, switchWs } = useContext(WorkspaceContext);
 
   const deleteBtnRef = useRef(null);
-
-  const [plotData, setPlotData] = useState({});
-  const [plotName, setPlotName] = useState("New Plot");
-  const [xlabel, setXlabel] = useState("X");
-  const [ylabel, setYlabel] = useState("Y");
-
-  const [rootWidth, setRootWidth] = useState(
-    document.documentElement.clientWidth
-  );
-
-  useEffect(() => {
-    setPlotName("New Plot");
-    setXlabel("X");
-    setYlabel("Y");
-
-    const storedData = JSON.parse(localStorage.getItem(currentWs));
-
-    if (storedData === null) {
-      return;
-    }
-
-    const trace = {
-      x: storedData.x,
-      y: storedData.y,
-      type: "scatter",
-      mode: "lines+markers",
-      marker: { color: "blue" },
-    };
-
-    setPlotData([trace]);
-  }, [currentWs]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setRootWidth(document.documentElement.clientWidth);
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  const nameInputRef = useRef(null);
 
   const handleDeleteClick = (e) => {
     deleteBtnRef.current.style.border = "none";
     localStorage.removeItem(currentWs);
     switchWs("");
-    setPlotData({});
   };
 
-  const handleDeleteMouseOver = (e) => {
+  const handleRenameClick = (e) => {
+    const newName = nameInputRef.current.value;
+
+    if (newName.trim() === "") {
+      alert("Workspace name must be at least 1 character long!");
+      return;
+    }
+
+    const newKey = "ws-" + newName;
+
+    if (localStorage.getItem(newKey) === null) {
+      localStorage.setItem(newKey, localStorage.getItem(currentWs));
+      localStorage.removeItem(currentWs);
+      switchWs(newKey);
+    } else {
+      alert("A workspace with this name already exists!");
+    }
+  };
+
+  const handleBtnMouseOver = (e) => {
     e.currentTarget.style.border = "3px solid black";
   };
 
-  const handleDeleteMouseOut = (e) => {
+  const handleBtnMouseOut = (e) => {
     e.currentTarget.style.border = "none";
   };
 
   if (currentWs != "") {
+    const storedData = JSON.parse(localStorage.getItem(currentWs));
+    const plots = storedData ? storedData.plots : [];
+
     return (
       <>
         <div
-          ref={deleteBtnRef}
-          onMouseOver={handleDeleteMouseOver}
-          onMouseOut={handleDeleteMouseOut}
-          onClick={handleDeleteClick}
-          style={{
-            height: "4vw",
-            width: "4vw",
-            margin: "2vw",
-            borderRadius: "2vw",
-          }}
-          className="d-flex flex-column justify-content-center align-items-center"
+          className="d-flex flex-row align-items-center"
+          style={{ margin: "1.5vw 0" }}
         >
-          <img
-            src="https://static-00.iconduck.com/assets.00/trash-bin-icon-2048x2048-duca73jv.png"
-            style={{ width: "70%", height: "70%" }}
+          <input
+            type="text"
+            maxLength="8"
+            style={{ width: "12vw", marginRight: "1vw", padding: "0.5vw" }}
+            placeholder={currentWs.substring(3)}
+            ref={nameInputRef}
           />
-        </div>
-        <div style={{ border: "2px solid black" }}>
-          <Plot
-            data={plotData}
-            layout={{
-              width: rootWidth * 0.4,
-              height: rootWidth * 0.25,
-              title: plotName ? { text: plotName } : {},
-              xaxis: { title: xlabel },
-              yaxis: { title: ylabel },
+
+          <div
+            onClick={handleRenameClick}
+            onMouseOver={handleBtnMouseOver}
+            onMouseOut={handleBtnMouseOut}
+            style={{
+              height: "3vw",
+              width: "3vw",
+              margin: "0.5vw",
+              borderRadius: "2vw",
             }}
-            useResizeHandler={true}
-            style={{ width: "100%", height: "100%" }}
-          />
+            className="d-flex flex-column justify-content-center align-items-center"
+          >
+            <img
+              src="https://cdn.icon-icons.com/icons2/1769/PNG/512/4115228-accept-checklist-checkmark-yes_114037.png"
+              style={{ width: "80%", height: "80%" }}
+            />
+          </div>
+
+          <div
+            ref={deleteBtnRef}
+            onMouseOver={handleBtnMouseOver}
+            onMouseOut={handleBtnMouseOut}
+            onClick={handleDeleteClick}
+            style={{
+              height: "3vw",
+              width: "3vw",
+              margin: "0.5vw",
+              borderRadius: "2vw",
+            }}
+            className="d-flex flex-column justify-content-center align-items-center"
+          >
+            <img
+              src="https://static-00.iconduck.com/assets.00/trash-bin-icon-2048x2048-duca73jv.png"
+              style={{ width: "60%", height: "60%" }}
+            />
+          </div>
         </div>
 
-        <div style={{ marginTop: "3vw" }}>
-          <Row style={{ marginBottom: "10px" }}>
-            <Col md={6} className="d-flex flex-column justify-content-center">
-              <p style={{ fontSize: "18px", margin: 0 }}>Plot name:</p>
-            </Col>
-            <Col md={6}>
-              <input
-                type="text"
-                value={plotName}
-                onChange={(e) => setPlotName(e.target.value)}
-                placeholder="Plot Name"
-                className="form-control"
-              />
-            </Col>
-          </Row>
+        <div>
+          <p style={{ fontSize: "0.8vw", marginBottom: "2vw" }}>
+            * Drag and drop other files onto existing plots for multiple plots
+          </p>
+        </div>
 
-          <Row style={{ marginBottom: "10px" }}>
-            <Col md={6} className="d-flex flex-column justify-content-center">
-              <p style={{ fontSize: "18px", margin: 0 }}>X Label:</p>
-            </Col>
-            <Col md={6}>
-              <input
-                type="text"
-                value={xlabel}
-                onChange={(e) => setXlabel(e.target.value)}
-                placeholder="X Label"
-                className="form-control"
-              />
-            </Col>
-          </Row>
-
-          <Row style={{ marginBottom: "10px" }}>
-            <Col md={6} className="d-flex flex-column justify-content-center">
-              <p style={{ fontSize: "18px", margin: 0 }}>Y Label:</p>
-            </Col>
-            <Col md={6}>
-              <input
-                type="text"
-                value={ylabel}
-                onChange={(e) => setYlabel(e.target.value)}
-                placeholder="Y Label"
-                className="form-control"
-              />
-            </Col>
-          </Row>
+        <div className="d-flex flex-column align-items-center">
+          {plots.map((_, index) => (
+            <WspaceItemComponent key={"plot" + index} index={index} />
+          ))}
         </div>
       </>
     );
@@ -165,4 +125,4 @@ const MyPlotComponent = () => {
   }
 };
 
-export default MyPlotComponent;
+export default WspaceComponent;
