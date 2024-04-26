@@ -1,4 +1,9 @@
+import { useContext } from "react";
+import { WorkspaceContext } from "../App";
+
 function NewWspaceComponent() {
+  const { currentWs, switchWs } = useContext(WorkspaceContext);
+
   const handleDragOver = (e) => {
     e.target.parentNode.style.border = "3px dashed white";
   };
@@ -46,8 +51,7 @@ function NewWspaceComponent() {
     const key = "ws." + fileName;
 
     localStorage.setItem(key, JSON.stringify({ x, y }));
-    localStorage.setItem("currentWs", key);
-    window.dispatchEvent(new Event("storage"));
+    switchWs(key);
   };
 
   return (
@@ -61,7 +65,7 @@ function NewWspaceComponent() {
         marginTop: "1vw",
         maxWidth: "80%",
       }}
-      nDrop={(e) => e.preventDefault()}
+      onDrop={(e) => e.preventDefault()}
       onDragOver={(e) => e.preventDefault()}
     >
       <div
