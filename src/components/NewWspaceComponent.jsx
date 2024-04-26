@@ -50,6 +50,14 @@ function NewWspaceComponent() {
 
     const key = "ws." + fileName;
 
+    if (localStorage.getItem(key) !== null) {
+      alert(
+        "A workspace with this name already exists, rename/delete it to upload this file!"
+      );
+
+      return;
+    }
+
     localStorage.setItem(key, JSON.stringify({ x, y }));
     switchWs(key);
   };
