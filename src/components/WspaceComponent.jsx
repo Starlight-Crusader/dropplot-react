@@ -1,11 +1,13 @@
 import React, { useRef, useContext, useState, useEffect } from "react";
-import { WorkspaceContext } from "../App";
+import { ThemeContext, WorkspaceContext } from "../App";
 import WspaceItemComponent from "./WspaceItemComponent";
 
 const WspaceComponent = () => {
   const { currentWs, switchWs } = useContext(WorkspaceContext);
+  const { theme, setTheme } = useContext(ThemeContext);
   const [rerenderWs, setRerenderWs] = useState(true);
 
+  const renameBtnRef = useRef(null);
   const deleteBtnRef = useRef(null);
   const nameInputRef = useRef(null);
 
@@ -39,7 +41,7 @@ const WspaceComponent = () => {
   };
 
   const handleBtnMouseOver = (e) => {
-    e.currentTarget.style.border = "3px solid black";
+    e.currentTarget.style.border = "3px solid #222222";
   };
 
   const handleBtnMouseOut = (e) => {
@@ -47,7 +49,7 @@ const WspaceComponent = () => {
   };
 
   const handleDragOver = (e) => {
-    e.target.style.border = "2px dashed black";
+    e.target.style.border = "3px dashed";
   };
 
   const handleDragLeave = (e) => {
@@ -98,6 +100,35 @@ const WspaceComponent = () => {
     setRerenderWs(true);
   };
 
+  const mainContainerRef = useRef(null);
+  const dropSpaceRef = useRef(null);
+
+  useEffect(() => {
+    if (!theme) {
+      if (mainContainerRef.current) {
+        mainContainerRef.current.style.backgroundColor = "white";
+
+        mainContainerRef.current.style.borderLeft = "5px #222222 solid";
+        mainContainerRef.current.style.borderRight = "5px #222222 solid";
+      }
+
+      if (dropSpaceRef.current) {
+        dropSpaceRef.current.style.border = "white";
+      }
+    } else {
+      if (mainContainerRef.current) {
+        mainContainerRef.current.style.backgroundColor = "#222222";
+
+        mainContainerRef.current.style.borderLeft = "5px white solid";
+        mainContainerRef.current.style.borderRight = "5px white solid";
+      }
+
+      if (dropSpaceRef.current) {
+        dropSpaceRef.current.style.border = "#222222";
+      }
+    }
+  }, [theme, currentWs]);
+
   if (currentWs != "") {
     const storedData = JSON.parse(localStorage.getItem(currentWs));
     const plots = storedData ? storedData.plots : [];
@@ -108,6 +139,7 @@ const WspaceComponent = () => {
         onDragOver={(e) => e.preventDefault()}
         className="d-flex flex-column align-items-center"
         style={{ backgroundColor: "white", height: "100%" }}
+        ref={mainContainerRef}
       >
         <div
           className="d-flex flex-row align-items-center"
@@ -119,9 +151,11 @@ const WspaceComponent = () => {
             style={{ width: "12vw", marginRight: "1vw", padding: "0.5vw" }}
             placeholder={currentWs.substring(3)}
             ref={nameInputRef}
+            className="form-control"
           />
 
           <div
+            ref={renameBtnRef}
             onClick={handleRenameClick}
             onMouseOver={handleBtnMouseOver}
             onMouseOut={handleBtnMouseOut}
@@ -130,6 +164,7 @@ const WspaceComponent = () => {
               width: "3vw",
               margin: "0.5vw",
               borderRadius: "2vw",
+              backgroundColor: "white",
             }}
             className="d-flex flex-column justify-content-center align-items-center"
           >
@@ -149,6 +184,7 @@ const WspaceComponent = () => {
               width: "3vw",
               margin: "0.5vw",
               borderRadius: "2vw",
+              backgroundColor: "white",
             }}
             className="d-flex flex-column justify-content-center align-items-center"
           >
@@ -166,6 +202,7 @@ const WspaceComponent = () => {
         </div>
 
         <div
+          ref={dropSpaceRef}
           style={{
             margin: "2vw",
             maxWidth: "70%",

@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import Plot from "react-plotly.js";
 import { Row, Col } from "react-bootstrap";
-import { WorkspaceContext } from "../App";
+import { WorkspaceContext, ThemeContext } from "../App";
 
 const WspaceItemComponent = ({ index }) => {
   const { currentWs, switchWs } = useContext(WorkspaceContext);
+  const { theme, setTheme } = useContext(ThemeContext);
   const [rerenderPlot, setRerenderPlot] = useState(false);
 
   const [graphsData, setGraphsData] = useState([]);
@@ -60,7 +61,7 @@ const WspaceItemComponent = ({ index }) => {
   }, []);
 
   const handleDragOver = (e) => {
-    e.target.style.border = "2px dashed black";
+    e.target.style.border = "2px dashed";
   };
 
   const handleDragLeave = (e) => {
@@ -104,12 +105,27 @@ const WspaceItemComponent = ({ index }) => {
     setRerenderPlot(true);
   };
 
+  const dropSpaceRef = useRef(null);
+
+  useEffect(() => {
+    if (!theme) {
+      if (dropSpaceRef.current) {
+        dropSpaceRef.current.style.border = "white";
+      }
+    } else {
+      if (dropSpaceRef.current) {
+        dropSpaceRef.current.style.border = "#222222";
+      }
+    }
+  }, [theme]);
+
   return (
     <>
       <div
         className="d-flex flex-row align-items-center"
         onDrop={(e) => e.preventDefault()}
         onDragOver={(e) => e.preventDefault()}
+        style={{ margin: "0 1%" }}
       >
         <div>
           <Plot
@@ -120,6 +136,9 @@ const WspaceItemComponent = ({ index }) => {
               title: plotName ? { text: plotName } : {},
               xaxis: { title: xlabel },
               yaxis: { title: ylabel },
+              plot_bgcolor: theme === false ? "#ffffff" : "#222222",
+              paper_bgcolor: theme === false ? "#ffffff" : "#222222",
+              font: { color: theme === false ? "#000000" : "#ffffff" },
             }}
             useResizeHandler={true}
             style={{ width: "100%", height: "100%" }}
@@ -182,6 +201,7 @@ const WspaceItemComponent = ({ index }) => {
             onDragOver={(e) => e.preventDefault()}
           >
             <div
+              ref={dropSpaceRef}
               style={{
                 marginTop: "5%",
                 maxWidth: "70%",
