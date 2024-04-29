@@ -12,6 +12,7 @@ function App() {
   const [currentWs, setCurrentWs] = useState("");
 
   const switchWs = (wsNum) => {
+    localStorage.setItem("currentWs", wsNum);
     setCurrentWs(wsNum);
   };
 
@@ -34,6 +35,14 @@ function App() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
+  }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem("currentWs")) {
+      switchWs(localStorage.getItem("currentWs"));
+    } else {
+      switchWs("");
+    }
   }, []);
 
   const wsListContainer = useRef(null);
