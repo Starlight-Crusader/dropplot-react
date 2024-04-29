@@ -15,6 +15,7 @@ const WspaceListComponent = () => {
   }, [currentWs]);
 
   const handleItemClick = (key) => {
+    localStorage.setItem("currentWs", key);
     switchWs(key);
   };
 
